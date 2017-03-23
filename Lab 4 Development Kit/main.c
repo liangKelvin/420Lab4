@@ -71,6 +71,10 @@ int main (int argc, char* argv[]){
 		Lab4_saveoutput(r, nodecount, end-start);
 	}
 
+        // post processing
+        node_destroy(nodehead, nodecount_local);
+        free(num_in_links); free(num_out_links);
+
 	return 0;
 }
 
