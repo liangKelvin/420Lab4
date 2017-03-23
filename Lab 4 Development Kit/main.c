@@ -22,7 +22,6 @@ int main (int argc, char* argv[]){
 	int i, j;
 	double damp_const;
 	int iterationcount = 0;
-	int collected_nodecount;
 	double start;
 	double end;
 	int myRank;
@@ -65,20 +64,12 @@ int main (int argc, char* argv[]){
 		MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, MPI_COMM_WORLD);
 	}while(rel_error(r, r_pre, nodecount) >= EPSILON);
 	//printf("Program converges at %d th iteration.\n", iterationcount);
-	 
-
-
 	MPI_Finalize();
-
 	GET_TIME(end);
 
 	if(myRank == 0) {
 		Lab4_saveoutput(r, nodecount, end-start);
 	}
-
-	// post processing
-	node_destroy(nodehead, nodecount);
-	free(num_in_links); free(num_out_links);
 
 	return 0;
 }
