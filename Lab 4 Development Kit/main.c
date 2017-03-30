@@ -67,7 +67,7 @@ int main (int argc, char* argv[]){
 		//MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, MPI_COMM_WORLD);
 
 		// Version 2
-		
+		/*
 		int i;
 		
 		if(myRank == 0) {
@@ -82,10 +82,11 @@ int main (int argc, char* argv[]){
 		   MPI_Send(r_local, nodecount_local, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
 		}
 		MPI_Bcast(r, nodecount, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+		*/
 		
 		
 		// Version 1
-		/*
+		
 		int i;
 		
 		if(myRank == 0) {
@@ -103,7 +104,7 @@ int main (int argc, char* argv[]){
 		   MPI_Send(r_local, nodecount_local, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
 		   MPI_Recv(r, nodecount, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 		}
-		*/
+		
 
 	}while(rel_error(r, r_pre, nodecount) >= EPSILON);
 
