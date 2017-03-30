@@ -97,6 +97,7 @@ int main (int argc, char* argv[]){
 	//printf("Program converges at %d th iteration.\n", iterationcount);
 	MPI_Finalize();
 	GET_TIME(end);
+	printf("time: %f\n", end-start);
 
 	if(myRank == 0) {
 		Lab4_saveoutput(r, nodecount, end-start);
