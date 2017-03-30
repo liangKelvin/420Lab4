@@ -54,43 +54,57 @@ int main (int argc, char* argv[]){
 	do{
 		++iterationcount;
 		vec_cp(r, r_pre, nodecount);
-		
-		if(myRank == 0) {
-		  for ( i = 0; i < nodecount_local; ++i){
-			r[i] = 0;
-			for ( j = 0; j < nodehead[i].num_in_links; ++j)
-				r[i] += r_pre[nodehead[i].inlinks[j]] / num_out_links[nodehead[i].inlinks[j]];
-			r[i] *= DAMPING_FACTOR;
-			r[i] += damp_const;
-		  }
-		} else {
 
-			for ( i = 0; i < nodecount_local; ++i){
-				r_local[i] = 0;
-				for ( j = 0; j < nodehead[i].num_in_links; ++j)
-					r_local[i] += r_pre[nodehead[i].inlinks[j]] / num_out_links[nodehead[i].inlinks[j]];
-				r_local[i] *= DAMPING_FACTOR;
-				r_local[i] += damp_const;
-			}
+		for ( i = 0; i < nodecount_local; ++i){
+			r_local[i] = 0;
+			for ( j = 0; j < nodehead[i].num_in_links; ++j)
+				r_local[i] += r_pre[nodehead[i].inlinks[j]] / num_out_links[nodehead[i].inlinks[j]];
+			r_local[i] *= DAMPING_FACTOR;
+			r_local[i] += damp_const;
 		}
 		
-		// version 1
+		// Version 3
 		MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, MPI_COMM_WORLD);
 
+		// Version 2
 		/*
-		// version 2
 		int i;
+		
 		if(myRank == 0) {
+		   for(i = 0; i < nodecount_local; i++) {
+			r[i] = r_local[i];
+		   }
 		   for(i = 1; i < size; i++ ) {
 			MPI_Recv(&r[i*nodecount_local], nodecount_local, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 			//MPI_Send(r, nodecount, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
 		   }	
-	
 		} else {
 		   MPI_Send(r_local, nodecount_local, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
 		}
 		MPI_Bcast(r, nodecount, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-*/
+		
+		
+		// Version 1
+		/*
+		int i;
+		
+		if(myRank == 0) {
+		   for(i = 0; i < nodecount_local; i++) {
+			r[i] = r_local[i];
+		   }
+		   for(i = 1; i < size; i++ ) {
+			MPI_Recv(&r[i*nodecount_local], nodecount_local, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		   }	
+			
+		    for(i = 1; i < size; i++) {
+                	MPI_Send(r, nodecount, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
+            	    }
+		} else {
+		   MPI_Send(r_local, nodecount_local, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+		   MPI_Recv(r, nodecount, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		}
+		*/
+
 	}while(rel_error(r, r_pre, nodecount) >= EPSILON);
 
 	
